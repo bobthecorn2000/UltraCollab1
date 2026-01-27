@@ -61,7 +61,7 @@ public class PANDEISHEREAHHH : MonoBehaviour
 
         StartCoroutine(StartDelay());
         ScheduleNextFlick();
-        targetCircle.sizeDelta = new Vector2(circleHitRadius * 10f, circleHitRadius * 10f);
+        targetCircle.sizeDelta = new Vector2(circleHitRadius * 5f, circleHitRadius * 5f);
         Invoke(nameof(EndMiniGame), 42f);
     }
 
