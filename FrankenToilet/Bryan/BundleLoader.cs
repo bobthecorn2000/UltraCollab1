@@ -32,7 +32,7 @@ public static class BundleLoader
     public static GameObject MauriceBad;
 
     /// <summary> Real doomah trust </summary>
-    public static GameObject DoomahReal;
+    public static GameObject DoomahReal, Doomah;
 
     /// <summary> Load the asset bundle. </summary>
     public static void Load()
@@ -51,6 +51,7 @@ public static class BundleLoader
         DoomahImg = assetBundle.LoadAsset<Sprite>("assets/doomah.png");
         MauriceBad = assetBundle.LoadAsset<GameObject>("assets/mauricebad.prefab");
         DoomahReal = assetBundle.LoadAsset<GameObject>("assets/doomahreal.prefab");
+        Doomah = assetBundle.LoadAsset<GameObject>("assets/doomah.prefab");
     }
 
     /// <summary> Grabs the embedded asset bundle. </summary>
