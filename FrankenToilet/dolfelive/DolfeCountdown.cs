@@ -1,18 +1,17 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using FrankenToilet.Core.Extensions;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace FrankenToilet.dolfelive;
 
-public class DolfeCountdown : MonoBehaviour
+public sealed class DolfeCountdown : MonoBehaviour
 {
     public float timeLeft = 20;
-    public TextMeshProUGUI textPrefab;
-    public Transform container;
+    public TextMeshProUGUI textPrefab = null!;
+    public Transform container = null!;
+    public AudioClip timeRunOutClip = null!;
     public float minShakeAmount = 0.75f;
     public float maxShakeAmount = 2.75f;
     public float charSpacing = 15f;
@@ -20,16 +19,21 @@ public class DolfeCountdown : MonoBehaviour
     public float minPulseInterval = 0.1f;
     public float flashDuration = 0.1f;
     public bool countingDown = false;
+    public bool _sinSpawned = false;
     
     private List<TextMeshProUGUI> _charTexts = new List<TextMeshProUGUI>();
     private string _lastStr = "";
     private float _pulseTimer = 0f;
     private float _rainbowTimer = 0f;
     private float _randomTime = 90f;
-
+    private AudioSource _audioSource = null!;
+    private bool _audioPaused = false;
+    
     private void Start()
     {
         _randomTime = Random.Range(60f, 900f);
+        _audioSource = gameObject.AddComponent<AudioSource>();
+        _audioSource.clip = timeRunOutClip;
     }
     
     void RemakeStr(string newStr)
@@ -55,7 +59,7 @@ public class DolfeCountdown : MonoBehaviour
             _lastStr = newStr;
         }
     }
-
+    
     void RainbowCountdown()
     {
         _rainbowTimer += Time.deltaTime;
@@ -88,16 +92,35 @@ public class DolfeCountdown : MonoBehaviour
         if (!countingDown)
         {
             RainbowCountdown();
-            
             return;
         }
         
-        timeLeft -= Time.deltaTime;
-        timeLeft = Mathf.Clamp((float)timeLeft, 0f, float.MaxValue);
-        // out format: mm:ss.ms
-        // have each letter shake
-        // pulse red when low and have sfx play
-
+        if (!_sinSpawned)
+        {
+            timeLeft -= Time.deltaTime;
+            if (timeLeft <= 0f)
+            {
+                _sinSpawned = true;
+                DolfePlugin.SpawnSin();
+            }
+            if (timeLeft <= 8.775542f && timeLeft != 0f && !_audioSource.isPlaying && !_audioPaused)
+            {
+                _audioSource.Play();
+                _audioPaused = false;
+            }
+            
+            if (Time.deltaTime == 0)
+            {
+                _audioSource.Pause();
+                _audioPaused = true;
+            }
+            else if (_audioPaused)
+            {
+                _audioPaused = false;
+            }
+        }
+        timeLeft = Mathf.Clamp(timeLeft, 0f, float.MaxValue);
+        
         int minutes = (int)(timeLeft / 60);
         float seconds = timeLeft - minutes * 60;
 
@@ -105,7 +128,7 @@ public class DolfeCountdown : MonoBehaviour
 
         RemakeStr(unmappedStr);
         
-        float normalizedTime = timeLeft > 10 ? 1f : (float)(timeLeft / 10f);
+        float normalizedTime = timeLeft > 10 ? 1f : (timeLeft / 10f);
         float pulseInterval = Mathf.Lerp(minPulseInterval, maxPulseInterval, normalizedTime);
         float currentShake = Mathf.Lerp(maxShakeAmount, minShakeAmount, normalizedTime);
 
@@ -142,6 +165,21 @@ public class DolfeCountdown : MonoBehaviour
             default:
                 Debug.LogError($"Undefined character: {val}");
                 return "ERROR";
+        }
+    }
+    
+    public void StartTimer()
+    {
+        if (_audioPaused)
+            _audioSource.UnPause();
+    }
+    
+    public void StopTimer()
+    {
+        if (_audioSource.isPlaying)
+        {
+            _audioSource.Pause();
+            _audioPaused = true;
         }
     }
 }

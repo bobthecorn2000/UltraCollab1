@@ -89,13 +89,13 @@
     <None Remove="greycsont\assetstealfromrhythmgame.bundle" />
     <None Remove="earthling\toiletonfire.bundle" />
     <None Remove="lakeull\lakeullsfunnybundle" />
+    <None Remove="dolfelive\dolfe.bundle" />
     <EmbeddedResource Include="doomahreal\veryuniqueassetsnametrust.bundle" />
     <EmbeddedResource Include="triggeredidiot\assets.bundle" />
     <EmbeddedResource Include="greycsont\assetstealfromrhythmgame.bundle" />
     <EmbeddedResource Include="earthling\toiletonfire.bundle" />
     <EmbeddedResource Include="lakeull\lakeullsfunnybundle" />
     <EmbeddedResource Include="Bryan\fuckyou.bundle" />
-    <None Remove="dolfelive\dolfe.bundle" />
     <EmbeddedResource Include="dolfelive\dolfe.bundle" />
   </ItemGroup>
 
